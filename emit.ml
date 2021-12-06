@@ -79,7 +79,6 @@ let print_offset offset =
 let rec f e = 
     match e with
     | Reg(i) -> print_reg i
-    | Freg(i) -> print_reg i
     | Jal(rd, offset) ->
         print_offset offset;
         f rd;
@@ -129,7 +128,7 @@ let rec f e =
         (match offrs1 with
         | Base_rel(offset, rs1) ->
             print_12 offset;
-            print_reg rs1;
+            f rs1;
             print_string "010";
             f rd;
             print_string "0000011\n"
@@ -139,7 +138,7 @@ let rec f e =
         | Base_rel(offset, rs1) ->
             print_offset_m offset;
             f rs2;
-            print_reg rs1;
+            f rs1;
             print_string "010";
             print_offset_l offset;
             print_string "0100011\n"

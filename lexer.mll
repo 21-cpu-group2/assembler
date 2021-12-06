@@ -29,10 +29,8 @@ rule token = parse
     { LW }
 | "sw"
     { SW }
-| 'r' 
+| 'r' | 'f'
     { REG }
-| 'f'
-    { FREG }
 | '+' digit+ | '-' digit+ | digit+
     { INT (int_of_string (Lexing.lexeme lexbuf)) }
 | '('

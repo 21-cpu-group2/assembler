@@ -4,7 +4,6 @@
 
 %token <int> INT
 %token REG
-%token FREG
 %token JAL XOR ADD SUB ADDI BEQ BNE LW SW
 %token LPAREN RPAREN
 %token EOF
@@ -16,11 +15,13 @@
 integer:
 | INT                          { Int($1) }
 
+reg:
+| REG integer                  { Reg($2) }                         
+
 oprand:
 | INT                          { Int($1) }
-| REG integer                  { Reg($2) }
-| FREG integer                 { Freg($2) }
-| integer LPAREN REG integer RPAREN    { Base_rel($1, $4) }
+| reg                          { $1 }
+| integer LPAREN reg RPAREN    { Base_rel($1, $3) }
 
 inst:
 | JAL oprand oprand            { Jal($2, $3) }
