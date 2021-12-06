@@ -2,7 +2,7 @@
 
 please change the name of input file  to "test.asm"<br>
 
-how to execute
+how to execute<br>
 '''<br>
 make<br>
 ./main<br>
