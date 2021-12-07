@@ -1,6 +1,8 @@
 *.cmi
 *.cmo
+._bcdi
 lexer.ml
 main
 parser.ml
 parser.mli
+*.d

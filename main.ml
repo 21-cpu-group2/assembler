@@ -17,5 +17,6 @@ let file f =
     with e -> (close_in inchan; close_out outchan; raise e)
 
 let () = 
-    file "test";
+    let file_name = Sys.argv.(1) in
+    file file_name;
     print_string "11111111111111111111111111111111\n" (* nop *)

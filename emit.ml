@@ -143,6 +143,40 @@ let rec f e =
             print_offset_l offset;
             print_string "0100011\n"
         | _ -> raise Error)
+    (* Float instructions *)
+    | Fadd(rd, rs1, rs2) -> 
+        print_string "0000000";
+        f rs2;
+        f rs1;
+        print_string "000";
+        f rd;
+        print_string "1010011\n"
+    | Fsub(rd, rs1, rs2) -> 
+        print_string "0000100";
+        f rs2;
+        f rs1;
+        print_string "000";
+        f rd;
+        print_string "1010011\n"
+    | Fmul(rd, rs1, rs2) -> 
+        print_string "0001000";
+        f rs2;
+        f rs1;
+        print_string "000";
+        f rd;
+        print_string "1010011\n"
+    | Fdiv(rd, rs1, rs2) -> 
+        print_string "0001100";
+        f rs2;
+        f rs1;
+        print_string "000";
+        f rd;
+        print_string "1010011\n"
+    (* #### wait for implementation ##### *)
+
+
+
+
     | Instlis(head, tail) ->
         f head;
         f tail

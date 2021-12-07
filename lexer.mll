@@ -29,6 +29,42 @@ rule token = parse
     { LW }
 | "sw"
     { SW }
+| "fadd"
+    { FADD }
+| "fsub"
+    { FSUB }
+| "fmul"
+    { FMUL }
+| "fdiv"
+    { FDIV }
+| "fsqrt"
+    { FSQRT }
+| "sin"
+    { SIN }
+| "cos"
+    { COS }
+| "atan"
+    { ATAN }
+| "fhalf"
+    { FHALF }
+| "fabs"
+    { FABS }
+| "fneg"
+    { FNEG }
+| "fless"
+    { FLESS }
+| "fiszero"
+    { FISZERO }
+| "fispos"
+    { FISPOS }
+| "fisneg"
+    { FISNEG }
+| "floor"
+    { FLOOR }
+| "ftoi"
+    { FTOI }
+| "itof"
+    { ITOF }
 | 'r' | 'f'
     { REG }
 | '+' digit+ | '-' digit+ | digit+
