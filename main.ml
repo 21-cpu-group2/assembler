@@ -5,7 +5,7 @@ open Emit
 let lexbuf outchan l =
     Emit.f(Parser.exp Lexer.token l)
 
-let string s = lexbuf stdout (Lexing.from_string s)
+(* let string s = lexbuf stdout (Lexing.from_string s) *)
 
 let file f =
     let inchan = open_in (f ^ ".asm") in
@@ -18,5 +18,4 @@ let file f =
 
 let () = 
     let file_name = Sys.argv.(1) in
-    file file_name;
-    print_string "11111111111111111111111111111111\n" (* nop *)
+    file file_name

@@ -83,6 +83,12 @@ let rec f e =
         print_offset offset;
         f rd;
         print_string "1101111\n"
+    | Jalr(rd, rs1, offset) ->
+        print_12 offset;
+        f rs1;
+        print_string "000";
+        f rd;
+        print_string "1100111\n"
     | Xor(rd, rs1, rs2) -> 
         print_string "0000000";
         f rs2;
@@ -110,6 +116,27 @@ let rec f e =
         print_string "000";
         f rd;
         print_string "0110011\n"
+    | Sll(rd, rs1, rs2) ->
+        print_string "0000000";
+        f rs2;
+        f rs1;
+        print_string "001";
+        f rd;
+        print_string "0010011\n"
+    | Slli(rd, rs1, shamt) ->
+        print_string "0000000";
+        print_offset_l shamt; (* 5bit *)
+        f rs1;
+        print_string "001";
+        f rd;
+        print_string "0110011\n"
+    | Srli(rd, rs1, shamt) ->
+        print_string "0000000";
+        print_offset_l shamt; (* 5bit *)
+        f rs1;
+        print_string "101";
+        f rd;
+        print_string "0010011\n"
     | Beq(rs1, rs2, offset) ->
         print_offset_m offset;
         f rs2;
@@ -124,25 +151,33 @@ let rec f e =
         print_string "100"; (* in risc-v "001" *)
         print_offset_l offset;
         print_string "1100011\n"
-    | Lw(rd, offrs1) ->
-        (match offrs1 with
-        | Base_rel(offset, rs1) ->
-            print_12 offset;
-            f rs1;
-            print_string "010";
-            f rd;
-            print_string "0000011\n"
-        | _ -> raise Error)
-    | Sw(rs2, offrs1) ->
-        (match offrs1 with
-        | Base_rel(offset, rs1) ->
-            print_offset_m offset;
-            f rs2;
-            f rs1;
-            print_string "010";
-            print_offset_l offset;
-            print_string "0100011\n"
-        | _ -> raise Error)
+    | Blt(rs1, rs2, offset) ->
+        print_offset_m offset;
+        f rs2;
+        f rs1;
+        print_string "001";
+        print_offset_l offset;
+        print_string "1100011\n"
+    | Bge(rs1, rs2, offset) ->
+        print_offset_m offset;
+        f rs2;
+        f rs1;
+        print_string "101";
+        print_offset_l offset;
+        print_string "1100011\n"
+    | Lw(rd, rs1, offset) ->
+        print_12 offset;
+        f rs1;
+        print_string "010";
+        f rd;
+        print_string "0000011\n"
+    | Sw(rs2, rs1, offset) ->
+        print_offset_m offset;
+        f rs2;
+        f rs1;
+        print_string "010";
+        print_offset_l offset;
+        print_string "0100011\n"
     (* Float instructions *)
     | Fadd(rd, rs1, rs2) -> 
         print_string "0000000";
@@ -172,12 +207,86 @@ let rec f e =
         print_string "000";
         f rd;
         print_string "1010011\n"
-    (* #### wait for implementation ##### *)
-
-
-
-
+    | Sqrt(rd, rs1) ->
+        print_string "0101100";
+        print_string "00000";
+        f rs1;
+        print_string "000";
+        f rd;
+        print_string "1010011\n"
+    | Fhalf(rd, rs1) ->
+        print_string "0001000";
+        print_string "00000";
+        f rs1;
+        print_string "001";
+        f rd;
+        print_string "1010011\n"
+    | Fabs(rd, rs1) ->
+        print_string "0010000";
+        print_string "00000";
+        f rs1;
+        print_string "010";
+        f rd;
+        print_string "1010011\n";
+    | Fneg(rd, rs1) ->
+        print_string "0010000";
+        print_string "00000";
+        f rs1;
+        print_string "001";
+        f rd;
+        print_string "1010011\n"
+    | Fless(rd, rs1, rs2) ->
+        print_string "1010000";
+        f rs2;
+        f rs1;
+        print_string "001";
+        f rd;
+        print_string "1010011\n"
+    | Fiszero(rd, rs1) ->
+        print_string "1010000";
+        print_string "00000";
+        f rs1;
+        print_string "010";
+        f rd;
+        print_string "1010011\n"
+    | Fispos(rd, rs1) ->
+        print_string "1010000";
+        print_string "00000";
+        f rs1;
+        print_string "011";
+        f rd;
+        print_string "1010011\n"
+    | Fisneg(rd, rs1) ->
+        print_string "1010000";
+        print_string "00000";
+        f rs1;
+        print_string "101";
+        f rd;
+        print_string "1010011\n"
+    | Floor(rd, rs1) ->
+        print_string "1100000";
+        print_string "00000";
+        f rs1;
+        print_string "001";
+        f rd;
+        print_string "1010011\n"
+    | Ftoi(rd, rs1) ->
+        print_string "1100000";
+        print_string "00000";
+        f rs1;
+        print_string "000";
+        f rd;
+        print_string "1010011\n"
+    | Itof(rd, rs1) ->
+        print_string "1101000";
+        print_string "00000";
+        f rs1;
+        print_string "000";
+        f rd;
+        print_string "1010011\n"
     | Instlis(head, tail) ->
         f head;
         f tail
+    | Nop ->
+        print_string "11111111111111111111111111111111\n"
     | _ -> raise Error

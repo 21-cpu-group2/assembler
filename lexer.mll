@@ -13,6 +13,8 @@ rule token = parse
     { token lexbuf }
 | "jal"
     { JAL }
+| "jalr"
+    { JALR }
 | "xor"
     { XOR }
 | "addi"
@@ -25,6 +27,16 @@ rule token = parse
     { BEQ }
 | "bne"
     { BNE }
+| "blt"
+    { BLT }
+| "bge" 
+    { BGE }
+| "sll"
+    { SLL }
+| "slli"
+    { SLLI }
+| "srli"
+    { SRLI }
 | "lw"
     { LW }
 | "sw"
@@ -37,34 +49,30 @@ rule token = parse
     { FMUL }
 | "fdiv"
     { FDIV }
-| "fsqrt"
-    { FSQRT }
-| "sin"
-    { SIN }
-| "cos"
-    { COS }
-| "atan"
-    { ATAN }
-| "fhalf"
+| "min_caml_sqrt"
+    { SQRT }
+| "min_caml_fhalf"
     { FHALF }
-| "fabs"
+| "min_caml_fabs"
     { FABS }
-| "fneg"
+| "min_caml_fneg"
     { FNEG }
-| "fless"
+| "min_caml_fless"
     { FLESS }
-| "fiszero"
+| "min_caml_fiszero"
     { FISZERO }
-| "fispos"
+| "min_caml_fispos"
     { FISPOS }
-| "fisneg"
+| "min_caml_fisneg"
     { FISNEG }
-| "floor"
+| "min_caml_floor"
     { FLOOR }
-| "ftoi"
+| "min_caml_ftoi"
     { FTOI }
-| "itof"
+| "min_caml_itof"
     { ITOF }
+| "nop"
+    { NOP }
 | 'r' | 'f'
     { REG }
 | '+' digit+ | '-' digit+ | digit+
