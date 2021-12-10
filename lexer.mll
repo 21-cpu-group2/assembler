@@ -89,6 +89,6 @@ rule token = parse
 | label_head (label_alp|digit)* as l
     { LABEL (l) }
 | '#' (label_alp|digit|space)* as l
-    { print_string l; COMMENT_OUT }
+    { COMMENT_OUT }
 | eof
     { EOF }
