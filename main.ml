@@ -3,7 +3,8 @@ open Lexer
 open Emit
 
 let lexbuf outchan l =
-    Emit.f(Parser.exp Lexer.token l)
+    let m = Labels.empty in
+    Emit.f (Parser.exp Lexer.token l) m
 
 (* let string s = lexbuf stdout (Lexing.from_string s) *)
 

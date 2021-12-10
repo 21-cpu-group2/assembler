@@ -3,6 +3,9 @@
 %}
 
 %token <int> INT
+%token <string> LABEL
+%token LABEL
+%token NL
 %token REG
 %token JAL JALR XOR ADD SUB ADDI BEQ BNE BLT BGE SLL SLLI SRLI LW SW
 %token FADD FSUB FMUL FDIV SQRT
@@ -10,6 +13,7 @@
 %token FLESS FISZERO FISNEG FISPOS
 %token FLOOR FTOI ITOF
 %token LPAREN RPAREN
+%token COLON
 %token NOP
 %token EOF
 
@@ -25,6 +29,7 @@ reg:
 
 oprand:
 | INT                          { Int($1) }
+| LABEL                        { Label($1, (string_of_int(Parsing.symbol_start_pos ()).pos_lnum)) }
 | reg                          { $1 }
 | integer LPAREN reg RPAREN    { Base_rel($1, $3) }
 
@@ -40,8 +45,8 @@ inst:
 | BLT oprand oprand oprand     { Blt($2, $3, $4) }
 | BGE oprand oprand oprand     { Bge($2, $3, $4) }
 | SLL oprand oprand oprand     { Sll($2, $3, $4) }
-| SLLI oprand oprand oprand     { Sll($2, $3, $4) }
-| SRLI oprand oprand oprand     { Sll($2, $3, $4) }
+| SLLI oprand oprand oprand    { Sll($2, $3, $4) }
+| SRLI oprand oprand oprand    { Sll($2, $3, $4) }
 | LW oprand oprand oprand      { Lw($2, $3, $4) }
 | SW oprand oprand oprand      { Sw($2, $3, $4) }
 | FADD oprand oprand oprand    { Fadd($2, $3, $4) }
@@ -60,7 +65,8 @@ inst:
 | FTOI oprand oprand           { Ftoi($2, $3) }
 | ITOF oprand oprand           { Itof($2, $3) }
 | NOP                          { Nop }
+| LABEL COLON                  { Label($1, (string_of_int(Parsing.symbol_start_pos ()).pos_lnum)) }
 
 exp:
 | inst                         { $1 }
-| inst exp                     { Instlis($1, $2) }
+| inst NL exp                  { Instlis($1, $3) }

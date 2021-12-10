@@ -1,10 +1,11 @@
 open Syntax
+module Labels = Map.Make(String)
 
 exception Error
 
 let print_reg n =
     match n with
-    | Int(n) -> 
+    | Reg(Int(n)) -> 
         (if ( n land (1 lsl 4) = 0 ) then print_int 0 else print_int 1); 
         (if ( n land (1 lsl 3) = 0 ) then print_int 0 else print_int 1); 
         (if ( n land (1 lsl 2) = 0 ) then print_int 0 else print_int 1); 
@@ -76,217 +77,323 @@ let print_offset offset =
         (if ( n land (1 lsl 0) = 0 ) then print_int 0 else print_int 1)
     | _ -> raise Error 
 
-let rec f e = 
+let rec f e map = 
     match e with
-    | Reg(i) -> print_reg i
     | Jal(rd, offset) ->
-        print_offset offset;
-        f rd;
-        print_string "1101111\n"
+        (match offset with 
+        | Label(s, i) ->
+            let label_address = Labels.find s map in
+            let pc = int_of_string i in
+            let rel_address = Int((int_of_string (label_address)) - pc + 1) in
+            print_offset rel_address;
+        | Int(i) -> 
+            print_offset offset;
+        | _ ->
+            raise Error);
+        print_reg rd;
+        print_string "1101111\n";
+        map
     | Jalr(rd, rs1, offset) ->
         print_12 offset;
-        f rs1;
+        print_reg rs1;
         print_string "000";
-        f rd;
-        print_string "1100111\n"
+        print_reg rd;
+        print_string "1100111\n";
+        map
     | Xor(rd, rs1, rs2) -> 
         print_string "0000000";
-        f rs2;
-        f rs1;
+        print_reg rs2;
+        print_reg rs1;
         print_string "100";
-        f rd;
-        print_string "0110011\n"
+        print_reg rd;
+        print_string "0110011\n";
+        map
     | Addi(rd, rs1, imm) ->
-        print_12 imm;
-        f rs1;
+        (match imm with 
+        | Label(s, i) ->
+            let label_address = Labels.find s map in
+            let pc = int_of_string i in
+            let rel_address = Int((int_of_string (label_address)) - pc + 1) in
+            print_12 rel_address
+        | Int(i) -> 
+            print_12 imm
+        | _ ->
+            raise Error);
+        print_reg rs1;
         print_string "000";
-        f rd;
-        print_string "0010011\n"
+        print_reg rd;
+        print_string "0010011\n";
+        map;
     | Add(rd, rs1, rs2) -> 
         print_string "0000000";
-        f rs2;
-        f rs1;
+        print_reg rs2;
+        print_reg rs1;
         print_string "000";
-        f rd;
-        print_string "0110011\n"
+        print_reg rd;
+        print_string "0110011\n";
+        map
     | Sub(rd, rs1, rs2) -> 
         print_string "0100000";
-        f rs2;
-        f rs1;
+        print_reg rs2;
+        print_reg rs1;
         print_string "000";
-        f rd;
-        print_string "0110011\n"
+        print_reg rd;
+        print_string "0110011\n";
+        map
     | Sll(rd, rs1, rs2) ->
         print_string "0000000";
-        f rs2;
-        f rs1;
+        print_reg rs2;
+        print_reg rs1;
         print_string "001";
-        f rd;
-        print_string "0010011\n"
+        print_reg rd;
+        print_string "0010011\n";
+        map
     | Slli(rd, rs1, shamt) ->
         print_string "0000000";
         print_offset_l shamt; (* 5bit *)
-        f rs1;
+        print_reg rs1;
         print_string "001";
-        f rd;
-        print_string "0110011\n"
+        print_reg rd;
+        print_string "0110011\n";
+        map
     | Srli(rd, rs1, shamt) ->
         print_string "0000000";
         print_offset_l shamt; (* 5bit *)
-        f rs1;
+        print_reg rs1;
         print_string "101";
-        f rd;
-        print_string "0010011\n"
+        print_reg rd;
+        print_string "0010011\n";
+        map
     | Beq(rs1, rs2, offset) ->
-        print_offset_m offset;
-        f rs2;
-        f rs1;
-        print_string "000";
-        print_offset_l offset;
-        print_string "1100011\n"
+        (match offset with 
+        | Label(s, i) ->
+            let label_address = Labels.find s map in
+            let pc = int_of_string i in
+            let rel_address = Int((int_of_string (label_address)) - pc + 1) in
+            print_offset_m rel_address;
+            print_reg rs2;
+            print_reg rs1;
+            print_string "000";
+            print_offset_l rel_address;
+            print_string "1100011\n";
+        | Int(i) -> 
+            print_12 offset;
+            print_reg rs2;
+            print_reg rs1;
+            print_string "000";
+            print_offset_l offset;
+            print_string "1100011\n";
+        | _ ->
+            raise Error);
+        map
     | Bne(rs1, rs2, offset) ->
-        print_offset_m offset;
-        f rs2;
-        f rs1;
-        print_string "100"; (* in risc-v "001" *)
-        print_offset_l offset;
-        print_string "1100011\n"
+        (match offset with 
+        | Label(s, i) ->
+            let label_address = Labels.find s map in
+            let pc = int_of_string i in
+            let rel_address = Int((int_of_string (label_address)) - pc + 1) in
+            print_offset_m rel_address;
+            print_reg rs2;
+            print_reg rs1;
+            print_string "100";  (* in risc-v "001" *)
+            print_offset_l rel_address;
+            print_string "1100011\n";
+        | Int(i) -> 
+            print_12 offset;
+            print_reg rs2;
+            print_reg rs1;
+            print_string "100";
+            print_offset_l offset;
+            print_string "1100011\n";
+        | _ ->
+            raise Error);
+        map
     | Blt(rs1, rs2, offset) ->
-        print_offset_m offset;
-        f rs2;
-        f rs1;
-        print_string "001";
-        print_offset_l offset;
-        print_string "1100011\n"
+        (match offset with 
+        | Label(s, i) ->
+            let label_address = Labels.find s map in
+            let pc = int_of_string i in
+            let rel_address = Int((int_of_string (label_address)) - pc + 1) in
+            print_offset_m rel_address;
+            print_reg rs2;
+            print_reg rs1;
+            print_string "001";  (* in risc-v "100" *)
+            print_offset_l rel_address;
+            print_string "1100011\n";
+        | Int(i) -> 
+            print_12 offset;
+            print_reg rs2;
+            print_reg rs1;
+            print_string "001";
+            print_offset_l offset;
+            print_string "1100011\n";
+        | _ ->
+            raise Error);
+        map
     | Bge(rs1, rs2, offset) ->
-        print_offset_m offset;
-        f rs2;
-        f rs1;
-        print_string "101";
-        print_offset_l offset;
-        print_string "1100011\n"
+        (match offset with 
+        | Label(s, i) ->
+            let label_address = Labels.find s map in
+            let pc = int_of_string i in
+            let rel_address = Int((int_of_string (label_address)) - pc + 1) in
+            print_offset_m rel_address;
+            print_reg rs2;
+            print_reg rs1;
+            print_string "101";
+            print_offset_l rel_address;
+            print_string "1100011\n";
+        | Int(i) -> 
+            print_12 offset;
+            print_reg rs2;
+            print_reg rs1;
+            print_string "101";
+            print_offset_l offset;
+            print_string "1100011\n";
+        | _ ->
+            raise Error);
+        map
     | Lw(rd, rs1, offset) ->
         print_12 offset;
-        f rs1;
+        print_reg rs1;
         print_string "010";
-        f rd;
-        print_string "0000011\n"
+        print_reg rd;
+        print_string "0000011\n";
+        map
     | Sw(rs2, rs1, offset) ->
         print_offset_m offset;
-        f rs2;
-        f rs1;
+        print_reg rs2;
+        print_reg rs1;
         print_string "010";
         print_offset_l offset;
-        print_string "0100011\n"
+        print_string "0100011\n";
+        map
     (* Float instructions *)
     | Fadd(rd, rs1, rs2) -> 
         print_string "0000000";
-        f rs2;
-        f rs1;
+        print_reg rs2;
+        print_reg rs1;
         print_string "000";
-        f rd;
-        print_string "1010011\n"
+        print_reg rd;
+        print_string "1010011\n";
+        map
     | Fsub(rd, rs1, rs2) -> 
         print_string "0000100";
-        f rs2;
-        f rs1;
+        print_reg rs2;
+        print_reg rs1;
         print_string "000";
-        f rd;
-        print_string "1010011\n"
+        print_reg rd;
+        print_string "1010011\n";
+        map
     | Fmul(rd, rs1, rs2) -> 
         print_string "0001000";
-        f rs2;
-        f rs1;
+        print_reg rs2;
+        print_reg rs1;
         print_string "000";
-        f rd;
-        print_string "1010011\n"
+        print_reg rd;
+        print_string "1010011\n";
+        map
     | Fdiv(rd, rs1, rs2) -> 
         print_string "0001100";
-        f rs2;
-        f rs1;
+        print_reg rs2;
+        print_reg rs1;
         print_string "000";
-        f rd;
-        print_string "1010011\n"
+        print_reg rd;
+        print_string "1010011\n";
+        map
     | Sqrt(rd, rs1) ->
         print_string "0101100";
         print_string "00000";
-        f rs1;
+        print_reg rs1;
         print_string "000";
-        f rd;
-        print_string "1010011\n"
+        print_reg rd;
+        print_string "1010011\n";
+        map
     | Fhalf(rd, rs1) ->
         print_string "0001000";
         print_string "00000";
-        f rs1;
+        print_reg rs1;
         print_string "001";
-        f rd;
-        print_string "1010011\n"
+        print_reg rd;
+        print_string "1010011\n";
+        map
     | Fabs(rd, rs1) ->
         print_string "0010000";
         print_string "00000";
-        f rs1;
+        print_reg rs1;
         print_string "010";
-        f rd;
+        print_reg rd;
         print_string "1010011\n";
+        map
     | Fneg(rd, rs1) ->
         print_string "0010000";
         print_string "00000";
-        f rs1;
+        print_reg rs1;
         print_string "001";
-        f rd;
-        print_string "1010011\n"
+        print_reg rd;
+        print_string "1010011\n";
+        map
     | Fless(rd, rs1, rs2) ->
         print_string "1010000";
-        f rs2;
-        f rs1;
+        print_reg rs2;
+        print_reg rs1;
         print_string "001";
-        f rd;
-        print_string "1010011\n"
+        print_reg rd;
+        print_string "1010011\n";
+        map
     | Fiszero(rd, rs1) ->
         print_string "1010000";
         print_string "00000";
-        f rs1;
+        print_reg rs1;
         print_string "010";
-        f rd;
-        print_string "1010011\n"
+        print_reg rd;
+        print_string "1010011\n";
+        map
     | Fispos(rd, rs1) ->
         print_string "1010000";
         print_string "00000";
-        f rs1;
+        print_reg rs1;
         print_string "011";
-        f rd;
-        print_string "1010011\n"
+        print_reg rd;
+        print_string "1010011\n";
+        map
     | Fisneg(rd, rs1) ->
         print_string "1010000";
         print_string "00000";
-        f rs1;
+        print_reg rs1;
         print_string "101";
-        f rd;
-        print_string "1010011\n"
+        print_reg rd;
+        print_string "1010011\n";
+        map
     | Floor(rd, rs1) ->
         print_string "1100000";
         print_string "00000";
-        f rs1;
+        print_reg rs1;
         print_string "001";
-        f rd;
-        print_string "1010011\n"
+        print_reg rd;
+        print_string "1010011\n";
+        map
     | Ftoi(rd, rs1) ->
         print_string "1100000";
         print_string "00000";
-        f rs1;
+        print_reg rs1;
         print_string "000";
-        f rd;
-        print_string "1010011\n"
+        print_reg rd;
+        print_string "1010011\n";
+        map
     | Itof(rd, rs1) ->
         print_string "1101000";
         print_string "00000";
-        f rs1;
+        print_reg rs1;
         print_string "000";
-        f rd;
-        print_string "1010011\n"
+        print_reg rd;
+        print_string "1010011\n";
+        map
     | Instlis(head, tail) ->
-        f head;
-        f tail
+        let new_map = f head map in 
+        f tail new_map
     | Nop ->
-        print_string "11111111111111111111111111111111\n"
+        print_string "11111111111111111111111111111111\n";
+        map
+    | Label(s,i) ->
+        let newmap = Labels.add s i map in newmap
     | _ -> raise Error

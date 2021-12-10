@@ -2,78 +2,81 @@
     open Parser
 }
 
-let space = [' ' '\t' '\r' '\n' ',']
+let space = [' ' '\t' '\r' ',']
 let digit = ['0'-'9']
-let lower = ['a'-'z']
+let label_head = ['a'-'e' 'g'-'w' 'y'-'z' 'A'-'Z' '.']
+let label_alp = ['a'-'z' 'A'-'Z' '.']
 
 rule token = parse
+| '\n'
+    { NL }
 | space+
     { token lexbuf } (* 空白を読み飛ばす *)
 | "//"
     { token lexbuf }
 | "jal"
-    { JAL }
+    { Lexing.new_line lexbuf; JAL }
 | "jalr"
-    { JALR }
+    { Lexing.new_line lexbuf; JALR }
 | "xor"
-    { XOR }
+    { Lexing.new_line lexbuf; XOR }
 | "addi"
-    { ADDI }
+    { Lexing.new_line lexbuf; ADDI }
 | "add"
-    { ADD }
+    { Lexing.new_line lexbuf; ADD }
 | "sub"
-    { SUB }
+    { Lexing.new_line lexbuf; SUB }
 | "beq"
-    { BEQ }
+    { Lexing.new_line lexbuf; BEQ }
 | "bne"
-    { BNE }
+    { Lexing.new_line lexbuf; BNE }
 | "blt"
-    { BLT }
+    { Lexing.new_line lexbuf; BLT }
 | "bge" 
-    { BGE }
+    { Lexing.new_line lexbuf; BGE }
 | "sll"
-    { SLL }
+    { Lexing.new_line lexbuf; SLL }
 | "slli"
-    { SLLI }
+    { Lexing.new_line lexbuf; SLLI }
 | "srli"
-    { SRLI }
+    { Lexing.new_line lexbuf; SRLI }
 | "lw"
-    { LW }
+    { Lexing.new_line lexbuf; LW }
 | "sw"
-    { SW }
+    { Lexing.new_line lexbuf; SW }
 | "fadd"
-    { FADD }
+    { Lexing.new_line lexbuf; FADD }
 | "fsub"
-    { FSUB }
+    { Lexing.new_line lexbuf; FSUB }
 | "fmul"
-    { FMUL }
+    { Lexing.new_line lexbuf; FMUL }
 | "fdiv"
-    { FDIV }
+    { Lexing.new_line lexbuf; FDIV }
 | "min_caml_sqrt"
-    { SQRT }
+    { Lexing.new_line lexbuf; SQRT }
 | "min_caml_fhalf"
-    { FHALF }
+    { Lexing.new_line lexbuf; FHALF }
 | "min_caml_fabs"
-    { FABS }
+    { Lexing.new_line lexbuf; FABS }
 | "min_caml_fneg"
-    { FNEG }
+    { Lexing.new_line lexbuf; FNEG }
 | "min_caml_fless"
-    { FLESS }
+    { Lexing.new_line lexbuf; FLESS }
 | "min_caml_fiszero"
-    { FISZERO }
+    { Lexing.new_line lexbuf; FISZERO }
 | "min_caml_fispos"
-    { FISPOS }
+    { Lexing.new_line lexbuf; FISPOS }
 | "min_caml_fisneg"
-    { FISNEG }
+    { Lexing.new_line lexbuf; FISNEG }
 | "min_caml_floor"
-    { FLOOR }
+    { Lexing.new_line lexbuf; FLOOR }
 | "min_caml_ftoi"
-    { FTOI }
+    { Lexing.new_line lexbuf; FTOI }
 | "min_caml_itof"
-    { ITOF }
+    { Lexing.new_line lexbuf; ITOF }
 | "nop"
     { NOP }
-| 'r' | 'f'
+| 'x' | 'f'
     { REG }
 | '+' digit+ | '-' digit+ | digit+
     { INT (int_of_string (Lexing.lexeme lexbuf)) }
@@ -81,5 +84,9 @@ rule token = parse
     { LPAREN }
 | ')'
     { RPAREN }
+| ':'
+    { COLON }
+| label_head (label_alp|digit)* as l
+    { LABEL (l) }
 | eof
     { EOF }
