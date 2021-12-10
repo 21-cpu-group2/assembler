@@ -1,10 +1,8 @@
 # assembler
-
-please change the name of input file  to "test.asm"<br>
-
+<br>
 how to execute<br>
 '''<br>
 make<br>
-./main<br>
+./main <input file_name except ".asm"> <br>
 '''<br>
 
