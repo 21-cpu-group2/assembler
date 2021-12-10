@@ -177,7 +177,7 @@ let rec f e map =
             print_offset_l rel_address;
             print_string "1100011\n";
         | Int(i) -> 
-            print_12 offset;
+            print_offset_m offset;
             print_reg rs2;
             print_reg rs1;
             print_string "000";
@@ -199,7 +199,7 @@ let rec f e map =
             print_offset_l rel_address;
             print_string "1100011\n";
         | Int(i) -> 
-            print_12 offset;
+            print_offset_m offset;
             print_reg rs2;
             print_reg rs1;
             print_string "100";
@@ -221,7 +221,7 @@ let rec f e map =
             print_offset_l rel_address;
             print_string "1100011\n";
         | Int(i) -> 
-            print_12 offset;
+            print_offset_m offset;
             print_reg rs2;
             print_reg rs1;
             print_string "001";
@@ -243,7 +243,7 @@ let rec f e map =
             print_offset_l rel_address;
             print_string "1100011\n";
         | Int(i) -> 
-            print_12 offset;
+            print_offset_m offset;
             print_reg rs2;
             print_reg rs1;
             print_string "101";
