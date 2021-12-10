@@ -16,6 +16,7 @@
 %token COLON
 %token NOP
 %token EOF
+%token COMMENT_OUT
 
 %type <Syntax.t> exp
 %start exp
@@ -67,6 +68,9 @@ inst:
 | NOP                          { Nop }
 | LABEL COLON                  { Label($1, (string_of_int(Parsing.symbol_start_pos ()).pos_lnum)) }
 
+
 exp:
 | inst                         { $1 }
 | inst NL exp                  { Instlis($1, $3) }
+| inst COMMENT_OUT NL exp      { Instlis($1, $4) }
+| COMMENT_OUT NL exp           { $3 }

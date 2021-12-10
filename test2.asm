@@ -5,7 +5,8 @@ l.1234 :
 fadd f0, f1, f2
 addi x1, x2, l.1234
 l.3456 :
-fadd f0, f1, f2
+fadd f0, f1, f2 # aifjavnrajiofj
+# angfkajf
 fadd f0, f1, f2
 fadd f0, f1, f2
 jal x5, l.3456
