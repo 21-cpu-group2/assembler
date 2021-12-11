@@ -278,11 +278,21 @@ let rec f e map =
         | _ ->
             raise Error);
         map
-    | Li(rd, imm) ->
-        print_for_lui imm;
-        print_reg rd;
-        print_string "0110111\n";
-        print_12 imm;
+    | Li(rd, offset) ->
+        (match offset with 
+        | Label(s, i) ->
+            let label_address = Int((int_of_string(Labels.find s map)))in
+            print_for_lui label_address;
+            print_reg rd;
+            print_string "0110111\n";
+            print_12 label_address;
+        | Int(i) -> 
+            print_for_lui offset;
+            print_reg rd;
+            print_string "0110111\n";
+            print_12 offset;
+        | _ ->
+            raise Error);
         print_string "00000";
         print_string "000";
         print_reg rd;
