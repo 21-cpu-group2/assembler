@@ -2,10 +2,11 @@ open Syntax
 module Labels = Map.Make(String)
 
 exception Error
+exception Error_f
 
 let print_reg n =
     match n with
-    | Reg(Int(n)) -> 
+    | Reg(Int(n)) | Freg(Int(n)) -> 
         (if ( n land (1 lsl 4) = 0 ) then print_int 0 else print_int 1); 
         (if ( n land (1 lsl 3) = 0 ) then print_int 0 else print_int 1); 
         (if ( n land (1 lsl 2) = 0 ) then print_int 0 else print_int 1); 
@@ -29,6 +30,31 @@ let print_12 n =
         (if ( n land (1 lsl 1) = 0 ) then print_int 0 else print_int 1); 
         (if ( n land (1 lsl 0) = 0 ) then print_int 0 else print_int 1)
     | _ -> raise Error 
+
+let print_for_lui offset =
+    match offset with
+    | Int(n) -> 
+        (if ( n land (1 lsl 31) = 0 ) then print_int 0 else print_int 1); 
+        (if ( n land (1 lsl 30) = 0 ) then print_int 0 else print_int 1); 
+        (if ( n land (1 lsl 29) = 0 ) then print_int 0 else print_int 1); 
+        (if ( n land (1 lsl 28) = 0 ) then print_int 0 else print_int 1); 
+        (if ( n land (1 lsl 27) = 0 ) then print_int 0 else print_int 1); 
+        (if ( n land (1 lsl 26) = 0 ) then print_int 0 else print_int 1); 
+        (if ( n land (1 lsl 25) = 0 ) then print_int 0 else print_int 1);
+        (if ( n land (1 lsl 24) = 0 ) then print_int 0 else print_int 1); 
+        (if ( n land (1 lsl 23) = 0 ) then print_int 0 else print_int 1); 
+        (if ( n land (1 lsl 22) = 0 ) then print_int 0 else print_int 1); 
+        (if ( n land (1 lsl 21) = 0 ) then print_int 0 else print_int 1); 
+        (if ( n land (1 lsl 20) = 0 ) then print_int 0 else print_int 1); 
+        (if ( n land (1 lsl 19) = 0 ) then print_int 0 else print_int 1); 
+        (if ( n land (1 lsl 18) = 0 ) then print_int 0 else print_int 1);
+        (if ( n land (1 lsl 17) = 0 ) then print_int 0 else print_int 1); 
+        (if ( n land (1 lsl 16) = 0 ) then print_int 0 else print_int 1); 
+        (if ( n land (1 lsl 15) = 0 ) then print_int 0 else print_int 1); 
+        (if ( n land (1 lsl 14) = 0 ) then print_int 0 else print_int 1); 
+        (if ( n land (1 lsl 13) = 0 ) then print_int 0 else print_int 1); 
+        (if ( n land (1 lsl 12) = 0 ) then print_int 0 else print_int 1)
+    | _ -> raise Error
 
 let print_offset_m offset =
     match offset with
@@ -252,6 +278,16 @@ let rec f e map =
         | _ ->
             raise Error);
         map
+    | Li(rd, imm) ->
+        print_for_lui imm;
+        print_reg rd;
+        print_string "0110111\n";
+        print_12 imm;
+        print_string "00000";
+        print_string "000";
+        print_reg rd;
+        print_string "0010011\n";
+        map
     | Lw(rd, rs1, offset) ->
         print_12 offset;
         print_reg rs1;
@@ -396,4 +432,4 @@ let rec f e map =
         map
     | Label(s,i) ->
         let newmap = Labels.add s i map in newmap
-    | _ -> raise Error
+    | _ -> raise Error_f

@@ -2,6 +2,7 @@ type t = (* MinCamlの構文を表現するデータ型 (caml2html: syntax_t) *)
   | Int of int
   | Label of string * string
   | Reg of t
+  | Freg of t
   | Base_rel of t * t
   | Jal of t * t
   | Jalr of t * t * t
@@ -16,6 +17,7 @@ type t = (* MinCamlの構文を表現するデータ型 (caml2html: syntax_t) *)
   | Sll of t * t * t
   | Slli of t * t * t
   | Srli of t * t * t
+  | Li of t * t
   | Lw of t * t * t
   | Sw of t * t * t 
   | Fadd of t * t * t

@@ -6,8 +6,8 @@
 %token <string> LABEL
 %token LABEL
 %token NL
-%token REG
-%token JAL JALR XOR ADD SUB ADDI BEQ BNE BLT BGE SLL SLLI SRLI LW SW
+%token REG REG_ZERO FREG FREG_ZERO
+%token JAL JALR XOR ADD SUB ADDI BEQ BNE BLT BGE SLL SLLI SRLI LI LW SW
 %token FADD FSUB FMUL FDIV SQRT
 %token FHALF FABS FNEG
 %token FLESS FISZERO FISNEG FISPOS
@@ -26,7 +26,10 @@ integer:
 | INT                          { Int($1) }
 
 reg:
-| REG integer                  { Reg($2) }                         
+| REG_ZERO                     { Reg(Int(0)) }
+| FREG_ZERO                    { Freg(Int(0)) }
+| REG INT                      { Reg(Int($2 + 6)) }    /* (* %a0とかを6番に対応させるtrick*) */
+| FREG INT                     { Freg(Int($2 + 1)) }   
 
 oprand:
 | INT                          { Int($1) }
@@ -46,8 +49,9 @@ inst:
 | BLT oprand oprand oprand     { Blt($2, $3, $4) }
 | BGE oprand oprand oprand     { Bge($2, $3, $4) }
 | SLL oprand oprand oprand     { Sll($2, $3, $4) }
-| SLLI oprand oprand oprand    { Sll($2, $3, $4) }
-| SRLI oprand oprand oprand    { Sll($2, $3, $4) }
+| SLLI oprand oprand oprand    { Slli($2, $3, $4) }
+| SRLI oprand oprand oprand    { Srli($2, $3, $4) }
+| LI oprand oprand             { Li($2, $3) }
 | LW oprand oprand oprand      { Lw($2, $3, $4) }
 | SW oprand oprand oprand      { Sw($2, $3, $4) }
 | FADD oprand oprand oprand    { Fadd($2, $3, $4) }

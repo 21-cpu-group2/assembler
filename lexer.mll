@@ -5,7 +5,7 @@
 let space = [' ' '\t' '\r' ',']
 let digit = ['0'-'9']
 let label_head = ['a'-'e' 'g'-'w' 'y'-'z' 'A'-'Z' '.']
-let label_alp = ['a'-'z' 'A'-'Z' '.']
+let alphabet = ['a'-'z' 'A'-'Z' '.']
 
 rule token = parse
 | '\n'
@@ -40,6 +40,8 @@ rule token = parse
     { Lexing.new_line lexbuf; SLLI }
 | "srli"
     { Lexing.new_line lexbuf; SRLI }
+| "li" (*immの値に応じてluiを用いるかが変わる。すなわちLexing.new_lineを1やるか2回やるかわからない *)
+    { Lexing.new_line lexbuf; Lexing.new_line lexbuf; LI } 
 | "lw"
     { Lexing.new_line lexbuf; LW }
 | "sw"
@@ -76,19 +78,35 @@ rule token = parse
     { Lexing.new_line lexbuf; ITOF }
 | "nop"
     { NOP }
-| 'x' | 'f'
+| "%" | "%a" 
     { REG }
-| '+' digit+ | '-' digit+ | digit+
-    { INT (int_of_string (Lexing.lexeme lexbuf)) }
+| "%f"
+    { FREG }
+| "%zero"
+    { REG_ZERO}
+| "%fzero"
+    { FREG_ZERO }
+| "ra"
+    { INT(-5) }
+| "sp"
+    { INT(-4) }
+| "min_caml_hp"
+    { INT(-3) }
+| "in"
+    { INT(-2) }
+| "out"
+    { INT(-1) }
+| '+' digit+ | '-' digit+ | digit+ as l
+    {  INT (int_of_string (l)) }
 | '('
     { LPAREN }
 | ')'
     { RPAREN }
 | ':'
     { COLON }
-| label_head (label_alp|digit)* as l
+| (alphabet|digit)+ as l
     { LABEL (l) }
-| '#' (label_alp|digit|space)* as l
+| '#' (alphabet|digit|space)* as l
     { COMMENT_OUT }
 | eof
     { EOF }
