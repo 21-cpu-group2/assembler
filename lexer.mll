@@ -5,7 +5,7 @@
 let space = [' ' '\t' '\r' ',']
 let digit = ['0'-'9']
 let label_head = ['a'-'e' 'g'-'w' 'y'-'z' 'A'-'Z' '.']
-let alphabet = ['a'-'z' 'A'-'Z' '.']
+let alphabet = ['a'-'z' 'A'-'Z' '.' '_']
 
 rule token = parse
 | '\n'
@@ -97,13 +97,15 @@ rule token = parse
 | "out"
     { INT(-1) }
 | '+' digit+ | '-' digit+ | digit+ as l
-    {  INT (int_of_string (l)) }
+    { INT (int_of_string (l)) }
 | '('
     { LPAREN }
 | ')'
     { RPAREN }
 | ':'
     { COLON }
+| "l." (alphabet|digit)* as l
+    { LABEL_FLOAT_TABLE (l) }
 | (alphabet|digit)+ as l
     { LABEL (l) }
 | '#' (alphabet|digit|space)* as l

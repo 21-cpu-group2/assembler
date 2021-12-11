@@ -4,7 +4,7 @@
 
 %token <int> INT
 %token <string> LABEL
-%token LABEL
+%token <string> LABEL_FLOAT_TABLE
 %token NL
 %token REG REG_ZERO FREG FREG_ZERO
 %token JAL JALR XOR ADD SUB ADDI BEQ BNE BLT BGE SLL SLLI SRLI LI LW SW
@@ -34,6 +34,7 @@ reg:
 oprand:
 | INT                          { Int($1) }
 | LABEL                        { Label($1, (string_of_int(Parsing.symbol_start_pos ()).pos_lnum)) }
+| LABEL_FLOAT_TABLE            { Label($1, "dummy")}
 | reg                          { $1 }
 | integer LPAREN reg RPAREN    { Base_rel($1, $3) }
 
@@ -75,6 +76,9 @@ inst:
 
 exp:
 | inst                         { $1 }
+| inst COMMENT_OUT             { $1 }
 | inst NL exp                  { Instlis($1, $3) }
 | inst COMMENT_OUT NL exp      { Instlis($1, $4) }
 | COMMENT_OUT NL exp           { $3 }
+| LABEL_FLOAT_TABLE COLON NL INT NL exp { Instlis(Label($1, (string_of_int($4))), $6) }
+| LABEL_FLOAT_TABLE COLON COMMENT_OUT NL INT NL exp { Instlis(Label($1, (string_of_int($5))), $7) }
