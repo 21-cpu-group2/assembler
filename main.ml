@@ -1,10 +1,13 @@
 open Parser
 open Lexer
 open Emit
+open Mkmap
 
 let lexbuf outchan l =
-    let m = Labels.empty in
-    Emit.f (Parser.exp Lexer.token l) m
+    let map_init = Labels.empty in
+    let tree = (Parser.exp Lexer.token l) in
+    let map = Mkmap.f tree map_init in
+    Emit.f tree map
 
 (* let string s = lexbuf stdout (Lexing.from_string s) *)
 

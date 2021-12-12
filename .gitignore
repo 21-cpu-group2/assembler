@@ -1,3 +1,4 @@
+.DS_Store
 *.cmi
 *.cmo
 ._bcdi
@@ -8,3 +9,4 @@ parser.mli
 *.asm
 *.bin
 *.d
+*.pdf

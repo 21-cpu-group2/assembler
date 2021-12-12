@@ -1,5 +1,5 @@
 open Syntax
-module Labels = Map.Make(String)
+open Mkmap
 
 exception Error
 exception Error_f
@@ -441,5 +441,5 @@ let rec f e map =
         print_string "11111111111111111111111111111111\n";
         map
     | Label(s,i) ->
-        let newmap = Labels.add s i map in newmap
+        map
     | _ -> raise Error_f
