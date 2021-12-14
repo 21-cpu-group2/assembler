@@ -282,21 +282,25 @@ let rec f e map =
         (match offset with 
         | Label(s, i) ->
             let label_address = Int((int_of_string(Labels.find s map)))in
+            print_12 label_address;
+            print_string "00000";
+            print_string "000";
+            print_reg rd;
+            print_string "0010011\n";
             print_for_lui label_address;
             print_reg rd;
             print_string "0110111\n";
-            print_12 label_address;
         | Int(i) -> 
+            print_12 offset;
+            print_string "00000";
+            print_string "000";
+            print_reg rd;
+            print_string "0010011\n";
             print_for_lui offset;
             print_reg rd;
             print_string "0110111\n";
-            print_12 offset;
         | _ ->
             raise Error);
-        print_string "00000";
-        print_string "000";
-        print_reg rd;
-        print_string "0010011\n";
         map
     | Lw(rd, rs1, offset) ->
         print_12 offset;
