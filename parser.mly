@@ -27,9 +27,9 @@ integer:
 
 reg:
 | REG_ZERO                     { Reg(Int(0)) }
-| FREG_ZERO                    { Freg(Int(0)) }
+| FREG_ZERO                    { Freg(Int(19)) }
 | REG INT                      { Reg(Int($2 + 6)) }    /* (* %a0とかを6番に対応させるtrick*) */
-| FREG INT                     { Freg(Int($2 + 1)) }   
+| FREG INT                     { Freg(Int($2 + 20)) }   
 
 oprand:
 | INT                          { Int($1) }
@@ -79,6 +79,6 @@ exp:
 | inst COMMENT_OUT             { $1 }
 | inst NL exp                  { Instlis($1, $3) }
 | inst COMMENT_OUT NL exp      { Instlis($1, $4) }
-| COMMENT_OUT NL exp           { $3 }
-| LABEL_FLOAT_TABLE COLON NL INT NL exp { Instlis(Label($1, (string_of_int($4))), $6) }
+| COMMENT_OUT NL exp                                { $3 }
+| LABEL_FLOAT_TABLE COLON NL INT NL exp             { Instlis(Label($1, (string_of_int($4))), $6) }
 | LABEL_FLOAT_TABLE COLON COMMENT_OUT NL INT NL exp { Instlis(Label($1, (string_of_int($5))), $7) }

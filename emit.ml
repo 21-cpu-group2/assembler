@@ -172,7 +172,7 @@ let rec f e map =
         print_reg rs1;
         print_string "001";
         print_reg rd;
-        print_string "0010011\n";
+        print_string "0110011\n";
         map
     | Slli(rd, rs1, shamt) ->
         print_string "0000000";
@@ -180,7 +180,7 @@ let rec f e map =
         print_reg rs1;
         print_string "001";
         print_reg rd;
-        print_string "0110011\n";
+        print_string "0010011\n";
         map
     | Srli(rd, rs1, shamt) ->
         print_string "0000000";

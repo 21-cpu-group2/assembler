@@ -8,7 +8,7 @@ let label_head = ['a'-'e' 'g'-'w' 'y'-'z' 'A'-'Z' '.']
 let alphabet = ['a'-'z' 'A'-'Z' '.' '_']
 
 rule token = parse
-| '\n'
+| ('\n')+
     { NL }
 | space+
     { token lexbuf } (* 空白を読み飛ばす *)
@@ -54,27 +54,27 @@ rule token = parse
     { Lexing.new_line lexbuf; FMUL }
 | "fdiv"
     { Lexing.new_line lexbuf; FDIV }
-| "min_caml_sqrt"
+| "sqrt"
     { Lexing.new_line lexbuf; SQRT }
-| "min_caml_fhalf"
+| "fhalf"
     { Lexing.new_line lexbuf; FHALF }
-| "min_caml_fabs"
+| "fabs"
     { Lexing.new_line lexbuf; FABS }
-| "min_caml_fneg"
+| "fneg"
     { Lexing.new_line lexbuf; FNEG }
-| "min_caml_fless"
+| "fless"
     { Lexing.new_line lexbuf; FLESS }
-| "min_caml_fiszero"
+| "fiszero"
     { Lexing.new_line lexbuf; FISZERO }
-| "min_caml_fispos"
+| "fispos"
     { Lexing.new_line lexbuf; FISPOS }
-| "min_caml_fisneg"
+| "fisneg"
     { Lexing.new_line lexbuf; FISNEG }
-| "min_caml_floor"
+| "floor"
     { Lexing.new_line lexbuf; FLOOR }
-| "min_caml_ftoi"
+| "ftoi"
     { Lexing.new_line lexbuf; FTOI }
-| "min_caml_itof"
+| "itof"
     { Lexing.new_line lexbuf; ITOF }
 | "nop"
     { NOP }
@@ -83,7 +83,7 @@ rule token = parse
 | "%f"
     { FREG }
 | "%zero"
-    { REG_ZERO}
+    { REG_ZERO }
 | "%fzero"
     { FREG_ZERO }
 | "ra"
@@ -108,7 +108,7 @@ rule token = parse
     { LABEL_FLOAT_TABLE (l) }
 | (alphabet|digit)+ as l
     { LABEL (l) }
-| '#' (alphabet|digit|space)* as l
+| '#' ([^'\n'])* 
     { COMMENT_OUT }
 | eof
     { EOF }

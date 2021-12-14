@@ -3,11 +3,20 @@ open Lexer
 open Emit
 open Mkmap
 
+let print_correspond label pc =
+    print_string (label ^ " " ^ pc ^ "\n")
+
 let lexbuf outchan l =
     let map_init = Labels.empty in
     let tree = (Parser.exp Lexer.token l) in
     let map = Mkmap.f tree map_init in
-    Emit.f tree map
+    let pc_init = ((int_of_string(Labels.find "min_caml_start" map))) in
+    (* Labels.iter print_correspond map; *)
+    (* できればlabelと数値の対応を出力したい *)
+    print_int pc_init;
+    print_string "\n";
+    Emit.f tree map;
+    print_string "11111111111111111111111111111111"
 
 (* let string s = lexbuf stdout (Lexing.from_string s) *)
 
