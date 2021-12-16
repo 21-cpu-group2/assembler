@@ -41,7 +41,9 @@ rule token = parse
 | "srli"
     { Lexing.new_line lexbuf; SRLI }
 | "li" (*immの値に応じてluiを用いるかが変わる。すなわちLexing.new_lineを1やるか2回やるかわからない *)
-    { Lexing.new_line lexbuf; Lexing.new_line lexbuf; LI } 
+    { Lexing.new_line lexbuf; 
+      Lexing.new_line lexbuf; 
+      LI } 
 | "lw"
     { Lexing.new_line lexbuf; LW }
 | "sw"
@@ -77,7 +79,7 @@ rule token = parse
 | "itof"
     { Lexing.new_line lexbuf; ITOF }
 | "nop"
-    { NOP }
+    { Lexing.new_line lexbuf; NOP }
 | "%" | "%a" 
     { REG }
 | "%f"

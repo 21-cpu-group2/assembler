@@ -33,7 +33,7 @@ reg:
 
 oprand:
 | INT                          { Int($1) }
-| LABEL                        { Label($1, (string_of_int(Parsing.symbol_start_pos ()).pos_lnum)) }
+| LABEL                        { Label($1, (string_of_int (((Parsing.symbol_start_pos ()).pos_lnum)-1))) }
 | LABEL_FLOAT_TABLE            { Label($1, "dummy")}
 | reg                          { $1 }
 | integer LPAREN reg RPAREN    { Base_rel($1, $3) }
@@ -71,7 +71,7 @@ inst:
 | FTOI oprand oprand           { Ftoi($2, $3) }
 | ITOF oprand oprand           { Itof($2, $3) }
 | NOP                          { Nop }
-| LABEL COLON                  { Label($1, (string_of_int(Parsing.symbol_start_pos ()).pos_lnum)) }
+| LABEL COLON                  { Label($1, (string_of_int (((Parsing.symbol_start_pos ()).pos_lnum)-1))) }
 
 
 exp:

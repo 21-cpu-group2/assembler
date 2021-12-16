@@ -279,6 +279,7 @@ let rec f e map =
             raise Error);
         map
     | Li(rd, offset) ->
+    (* li命令は addi luiの順に展開して、したから12bit目が1でも対応できるようにする。*)
         (match offset with 
         | Label(s, i) ->
             let label_address = Int((int_of_string(Labels.find s map)))in

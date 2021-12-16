@@ -6,7 +6,7 @@ open Mkmap
 let print_correspond label pc =
     print_string (label ^ " " ^ pc ^ "\n")
 
-let print_label_pc = false
+let print_label_pc = true
 
 let lexbuf outchan l =
     let map_init = Labels.empty in
