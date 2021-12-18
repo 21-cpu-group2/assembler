@@ -106,7 +106,7 @@ rule token = parse
     { RPAREN }
 | ':'
     { COLON }
-| "l." (alphabet|digit)* as l
+| "l." (alphabet|digit)* | "ll." (alphabet|digit)* as l
     { LABEL_FLOAT_TABLE (l) }
 | (alphabet|digit)+ as l
     { LABEL (l) }
