@@ -2,7 +2,7 @@
     open Parser
 }
 
-let space = [' ' '\t' '\r' ','　'\n']
+let space = [' ' '\t' '\r' ',' '\n']
 let digit = ['0'-'9']
 let label_head = ['a'-'e' 'g'-'w' 'y'-'z' 'A'-'Z' '.']
 let alphabet = ['a'-'z' 'A'-'Z' '.' '_']
