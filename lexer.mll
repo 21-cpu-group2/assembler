@@ -2,16 +2,14 @@
     open Parser
 }
 
-let space = [' ' '\t' '\r' ',']
+let space = [' ' '\t' '\r' ','ã€€'\n']
 let digit = ['0'-'9']
 let label_head = ['a'-'e' 'g'-'w' 'y'-'z' 'A'-'Z' '.']
 let alphabet = ['a'-'z' 'A'-'Z' '.' '_']
 
 rule token = parse
-| ('\n')+
-    { NL }
 | space+
-    { token lexbuf } (* ¶õÇò¤òÆÉ¤ßÈô¤Ğ¤¹ *)
+    { token lexbuf } (* ç©ºç™½ã‚’èª­ã¿é£›ã°ã™ *)
 | "//"
     { token lexbuf }
 | "jal"
@@ -40,7 +38,7 @@ rule token = parse
     { Lexing.new_line lexbuf; SLLI }
 | "srli"
     { Lexing.new_line lexbuf; SRLI }
-| "li" (*imm¤ÎÃÍ¤Ë±ş¤¸¤Ælui¤òÍÑ¤¤¤ë¤«¤¬ÊÑ¤ï¤ë¡£¤¹¤Ê¤ï¤ÁLexing.new_line¤ò1¤ä¤ë¤«2²ó¤ä¤ë¤«¤ï¤«¤é¤Ê¤¤ *)
+| "li" (*immã®å€¤ã«å¿œã˜ã¦luiã‚’ç”¨ã„ã‚‹ã‹ãŒå¤‰ã‚ã‚‹ã€‚ã™ãªã‚ã¡Lexing.new_lineã‚’1ã‚„ã‚‹ã‹2å›ã‚„ã‚‹ã‹ã‚ã‹ã‚‰ãªã„ *)
     { Lexing.new_line lexbuf; 
       Lexing.new_line lexbuf; 
       LI } 
