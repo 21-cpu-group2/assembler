@@ -8,6 +8,28 @@ let print_correspond label pc =
 
 let print_label_pc = true
 
+let print_pc_init n =
+    (if ( n land (1 lsl 19) = 0 ) then print_int 0 else print_int 1); 
+    (if ( n land (1 lsl 18) = 0 ) then print_int 0 else print_int 1); 
+    (if ( n land (1 lsl 17) = 0 ) then print_int 0 else print_int 1); 
+    (if ( n land (1 lsl 16) = 0 ) then print_int 0 else print_int 1); 
+    (if ( n land (1 lsl 15) = 0 ) then print_int 0 else print_int 1);
+    (if ( n land (1 lsl 14) = 0 ) then print_int 0 else print_int 1); 
+    (if ( n land (1 lsl 13) = 0 ) then print_int 0 else print_int 1); 
+    (if ( n land (1 lsl 12) = 0 ) then print_int 0 else print_int 1); 
+    (if ( n land (1 lsl 11) = 0 ) then print_int 0 else print_int 1); 
+    (if ( n land (1 lsl 10) = 0 ) then print_int 0 else print_int 1);
+    (if ( n land (1 lsl 9) = 0 ) then print_int 0 else print_int 1); 
+    (if ( n land (1 lsl 8) = 0 ) then print_int 0 else print_int 1); 
+    (if ( n land (1 lsl 7) = 0 ) then print_int 0 else print_int 1); 
+    (if ( n land (1 lsl 6) = 0 ) then print_int 0 else print_int 1); 
+    (if ( n land (1 lsl 5) = 0 ) then print_int 0 else print_int 1);
+    (if ( n land (1 lsl 4) = 0 ) then print_int 0 else print_int 1); 
+    (if ( n land (1 lsl 3) = 0 ) then print_int 0 else print_int 1); 
+    (if ( n land (1 lsl 2) = 0 ) then print_int 0 else print_int 1); 
+    (if ( n land (1 lsl 1) = 0 ) then print_int 0 else print_int 1); 
+    (if ( n land (1 lsl 0) = 0 ) then print_int 0 else print_int 1)
+
 let lexbuf outchan l =
     let map_init = Labels.empty in
     let tree = (Parser.exp Lexer.token l) in
@@ -17,8 +39,9 @@ let lexbuf outchan l =
         Labels.iter print_correspond map
     )
     else (
-        print_int pc_init;
-        print_string "\n";
+        print_pc_init (pc_init);
+        print_string "00000";
+        print_string "1101111\n";
         Emit.f tree map;
         print_string "11111111111111111111111111111111"
     )

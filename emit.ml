@@ -33,7 +33,8 @@ let print_12 n =
 
 let print_for_lui offset =
     match offset with
-    | Int(n) -> 
+    | Int(i) -> 
+        let n = i in
         (if ( n land (1 lsl 31) = 0 ) then print_int 0 else print_int 1); 
         (if ( n land (1 lsl 30) = 0 ) then print_int 0 else print_int 1); 
         (if ( n land (1 lsl 29) = 0 ) then print_int 0 else print_int 1); 
@@ -110,7 +111,7 @@ let rec f e map =
         | Label(s, i) ->
             let label_address = Labels.find s map in
             let pc = int_of_string i in
-            let rel_address = Int((int_of_string (label_address)) - pc + 1) in
+            let rel_address = Int((int_of_string (label_address)) - pc) in
             print_offset rel_address;
         | Int(i) -> 
             print_offset offset;
@@ -139,7 +140,7 @@ let rec f e map =
         | Label(s, i) ->
             let label_address = Labels.find s map in
             let pc = int_of_string i in
-            let rel_address = Int((int_of_string (label_address)) - pc + 1) in
+            let rel_address = Int((int_of_string (label_address)) - pc) in
             print_12 rel_address
         | Int(i) -> 
             print_12 imm
@@ -195,7 +196,7 @@ let rec f e map =
         | Label(s, i) ->
             let label_address = Labels.find s map in
             let pc = int_of_string i in
-            let rel_address = Int((int_of_string (label_address)) - pc + 1) in
+            let rel_address = Int((int_of_string (label_address)) - pc) in
             print_offset_m rel_address;
             print_reg rs2;
             print_reg rs1;
@@ -217,7 +218,7 @@ let rec f e map =
         | Label(s, i) ->
             let label_address = Labels.find s map in
             let pc = int_of_string i in
-            let rel_address = Int((int_of_string (label_address)) - pc + 1) in
+            let rel_address = Int((int_of_string (label_address)) - pc) in
             print_offset_m rel_address;
             print_reg rs2;
             print_reg rs1;
@@ -239,7 +240,7 @@ let rec f e map =
         | Label(s, i) ->
             let label_address = Labels.find s map in
             let pc = int_of_string i in
-            let rel_address = Int((int_of_string (label_address)) - pc + 1) in
+            let rel_address = Int((int_of_string (label_address)) - pc) in
             print_offset_m rel_address;
             print_reg rs2;
             print_reg rs1;
@@ -261,7 +262,7 @@ let rec f e map =
         | Label(s, i) ->
             let label_address = Labels.find s map in
             let pc = int_of_string i in
-            let rel_address = Int((int_of_string (label_address)) - pc + 1) in
+            let rel_address = Int((int_of_string (label_address)) - pc) in
             print_offset_m rel_address;
             print_reg rs2;
             print_reg rs1;
